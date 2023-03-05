@@ -1,0 +1,61 @@
+<action name="sqoop_eeec_frh_builddim">
+	<sqoop xmlns="uri:oozie:sqoop-action:0.2">
+		<job-tracker>${jobTracker}</job-tracker>
+		<name-node>${nameNode}</name-node>
+		<prepare>
+			<delete path="${nameNode}${HDFS_ADDR_SFM_INCOMING_LOC}"/>
+		</prepare>
+		<configuration>
+			<property>
+				<name>mapred.compress.map.output</name>
+				<value>false</value>
+			</property>
+			<property>
+				<name>hadoop.job.history.user.location</name>
+				<value>none</value>
+			</property>
+			<property>
+				<name>fs.hdfs.impl.disable.cache</name>
+				<value>true</value>
+			</property>
+			<property>
+				<name>oozie.launcher.fs.hdfs.impl.disale.cache</name>
+				<value>true</value>
+			</property>
+			<property>
+				<name>mapreduce.fileoutputcommitter.marksuccessfuljobs</name>
+				<value>false</value>
+			</property>
+			<property>
+				<name>oozie.action.launcher.mapreduce.job.ubertask.enable</name>
+				<value>false</value>
+			</property>
+		</configuration>
+		<arg>import</arg>
+		<arg>--connect</arg>
+		<arg>${DB2_CONNEC_ADDR}/${DB2_INSTANCE_ADDR}</arg>
+		<arg>--username</arg>
+		<arg>${DB2_USERID_ADDR}</arg>
+		<arg>--passwoed-file</arg>
+		<arg>${DB2_FILE}</arg>
+		<arg>--boundary-query</arg>
+		<arg>SELECT MIN(${SPLIT_COLUMN}), MAX(${SPLIT_COLUMN}) FROM (SELECT *FROM ${DB2_DBNAME_ADDR}.${DB2_TABLENAME} WHERE ${DATETIME} >= timestamp('${wf:actionData('read_startdate_from_hdfs')['hrdate']} 
+		${wf:actionData('read_startdate_from_hdfs')[timestamp']}') AND ${DATETIME} ${LT} = RUNC((CURRENT TIMESTAMP - CURRENT TIMEZONE) - 1 MINUTE, 'MI') AND (1=1)) AS t1 for retch only with ur</arg>
+		<arg>--query</arg>
+		<arg>SELECT ${DB2_DBNAME_ADDR}.${DB2_TABLENAME}.*, DATE(${PARTITION_DATE}) AS TRAN_DATE FROM ${DB2_DBNAME_ADDR}.${DB2_TABLENAME} WHERE trunc(${DATETIME}, 'MI') timestamp('${wf:actionData('read_startdate_from_hdfs')['hrdate']}
+		${wf:actionData('read_startdate_from_hdfs')['timestamp']}' AND ${DATETEIME} ${LT} = trunc((CURRENT TIMESTAMP - CURRENT ZONE) -1 MINUTE, 'MI') AND $CONDITIONS for fetch only with ur </arg>
+		
+		<arg>--split-by</arg>
+		<arg>${SPLIT_COLUMN}</arg>
+		
+		<arg>--fields-terminated-by</arg>
+		<arg>${FIELD_TERMINATOR}</arg>
+		
+		<arg>--as-avrodatafile</arg>
+		<arg>--target-dir</arg>		
+		<arg>${HDFS_ADDR_SFM_INCOMING_LOC}</arg>
+		<arg>-num-mappers</arg>
+		<arg>${NUM_MAPPERS}</arg>
+		
+	</sqoop>
+	</action>
