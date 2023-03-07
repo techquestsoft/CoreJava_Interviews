@@ -9,7 +9,7 @@ public class ProductOfArrayExceptItself {
         int n = arr.length;
         System.out.println("input :: "+java.util.Arrays.toString(arr));
         //int[] productOutput = pa.productArray(arr, n);
-        int[] productOutput = pa.productArrayWithleftAndRightProducts(arr, n);
+        int[] productOutput = pa.productArrayWithOneOutputArray(arr, n);
 
         System.out.println("output :: "+java.util.Arrays.toString(productOutput));
     }
@@ -31,6 +31,7 @@ public class ProductOfArrayExceptItself {
         return product;
     }
 
+    /* Using extra space and loop : left and right product array */
     int[] productArrayWithleftAndRightProducts(int[] input, int inputLength){
         int[] output = new int[inputLength];
         int[] left_products = new int [inputLength];
@@ -53,4 +54,21 @@ public class ProductOfArrayExceptItself {
         return  output;
     }
 
+    /* Efficient in-place solution using single array */
+    int[] productArrayWithOneOutputArray(int[] input, int inputLength){
+        int[] output = new int[inputLength];
+        output[0] = 1;
+
+        for (int i=1; i < inputLength; i++){
+            output[i] = input[i-1] * output[i-1];
+        }
+        System.out.println("Left Product :: "+java.util.Arrays.toString(output));
+        int r = 1;
+        for (int i=inputLength-1; i >=0; i--){
+            output[i] = r * output[i];
+            r = r * input[i];
+        }
+
+        return  output;
+    }
 }
